@@ -103,6 +103,7 @@ shape = SubResource("BoxShape3D_8e511")
 
 [node name="MirrorGroup" parent="." unique_id=765777748 node_paths=PackedStringArray("player_camera") instance=ExtResource("3_h2yge")]
 transform = Transform3D(3.5527137e-15, 0, -1, 4.371139e-08, 1, 6.3831194e-37, 1, -4.371139e-08, 3.5527137e-15, 9.65386, 2.5825896, 2.3931189)
+visible = false
 player_camera = NodePath("../Player/Neck/Camera3D")
 
 [node name="Player" parent="." unique_id=346662432 instance=ExtResource("1_0xm2m")]
