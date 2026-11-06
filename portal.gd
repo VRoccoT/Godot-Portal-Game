@@ -1,6 +1,6 @@
 extends Node3D
 
-@export var target_portal: Node3D # Arraste o outro portal no Inspector
+@export var target_portal: Node3D
 @export var player_camera: Camera3D
 
 @onready var portal_mesh: MeshInstance3D = $PortalMesh
@@ -22,12 +22,12 @@ func _setup_target_material() -> void:
 
 	var target_mesh: MeshInstance3D = target_portal.get_node_or_null("PortalMesh")
 	if target_mesh:
-		# Duplica o material no Portal de Destino para garantir independência de textura
+		# Duplica o material para isolar as superfícies dos dois portais
 		var mat = target_mesh.get_active_material(0)
 		if mat is ShaderMaterial:
 			var local_mat = mat.duplicate() as ShaderMaterial
 			target_mesh.set_surface_override_material(0, local_mat)
-			# Passa a textura gerada por ESTE viewport para o portal de destino
+			# Envia a imagem gerada por ESTE viewport para o portal de DESTINO
 			local_mat.set_shader_parameter("target_texture", portal_viewport.get_texture())
 			_material_setup_done = true
 
@@ -43,32 +43,28 @@ func _process(_delta: float) -> void:
 	if not is_instance_valid(target_portal):
 		return
 
-	# Sincroniza projeção da câmera principal
+	# 1. Sincroniza FOV e far da câmera do jogador
 	portal_camera.fov = player_camera.fov
 	portal_camera.far = player_camera.far
 
-	# --- MATEMÁTICA DE PORTAL 3D COMPLETA ---
-	# Matriz de transformação global deste portal (A) e do portal de destino (B)
+	# --- MATEMÁTICA PARA A CÂMERA ACOMPANHAR A ROTAÇÃO DO PORTAL ---
 	var in_transform: Transform3D = global_transform
 	var out_transform: Transform3D = target_portal.global_transform
-
-	# Transformação relativa do jogador em relação a este portal (A)
 	var player_gt: Transform3D = player_camera.global_transform
-	var relative_to_in: Transform3D = in_transform.affine_inverse() * player_gt
 
-	# Matriz de inversão de 180° no eixo Y local (girar para olhar para fora da saída)
-	var flip_y := Transform3D(Basis(Vector3.UP, PI), Vector3.ZERO)
-	
-	# Matriz da câmera do portal de saída (B)
-	var out_camera_gt: Transform3D = out_transform * flip_y * relative_to_in
-	
-	# Aplica a transformação exata à câmera interna do portal
-	portal_camera.global_transform = out_camera_gt
+	# A) Descobre onde o jogador está em relação ao portal de ENTRADA (espaço local)
+	var player_local: Transform3D = in_transform.affine_inverse() * player_gt
 
-	# --- CORTE DINÂMICO DE PAREDE (NEAR PLANE OBLÍQUO) ---
+	# B) Calcula a nova posição e rotação GLOBAL da câmera no portal de SAÍDA.
+	# A rotação do nó target_portal (out_transform) vai girar automaticamente a PortalCamera!
+	var new_camera_transform: Transform3D = out_transform * player_local
+
+	# C) Aplica a transformação global calculada na câmera do portal
+	portal_camera.global_transform = new_camera_transform
+
+	# --- AJUSTE DO NEAR PLANE PARA NÃO CORTAR A PAREDE ---
 	var out_pos: Vector3 = out_transform.origin
 	var out_normal: Vector3 = out_transform.basis.z.normalized()
-	var dist_to_plane: float = (out_camera_gt.origin - out_pos).dot(out_normal)
+	var dist_to_plane: float = (portal_camera.global_position - out_pos).dot(out_normal)
 
-	# Evita que a câmera renderize a estrutura/parede atrás do portal de destino
 	portal_camera.near = max(0.01, dist_to_plane)

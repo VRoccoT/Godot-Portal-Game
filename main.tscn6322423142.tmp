@@ -1,0 +1,76 @@
+[gd_scene format=3 uid="uid://dymud4x6dafi"]
+
+[ext_resource type="PackedScene" uid="uid://crctiemcthn0p" path="res://player.tscn" id="1_0xm2m"]
+[ext_resource type="Script" uid="uid://xkd4lduiihds" path="res://World.gd" id="1_h2yge"]
+[ext_resource type="PackedScene" uid="uid://1nllabb0xslt" path="res://portal.tscn" id="2_h2yge"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_c4fn7"]
+
+[sub_resource type="Sky" id="Sky_8e511"]
+sky_material = SubResource("ProceduralSkyMaterial_c4fn7")
+
+[sub_resource type="Environment" id="Environment_s70hq"]
+background_mode = 2
+sky = SubResource("Sky_8e511")
+ambient_light_source = 3
+ambient_light_color = Color(0.6715141, 0.67151415, 0.6715141, 1)
+ambient_light_energy = 0.5
+tonemap_mode = 2
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1bvp3"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lquwl"]
+albedo_color = Color(0, 1, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_h2yge"]
+albedo_color = Color(0.07058824, 0.61960787, 1, 1)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7mycd"]
+albedo_color = Color(1, 0, 0, 1)
+
+[node name="World" type="Node3D" unique_id=194092051]
+script = ExtResource("1_h2yge")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=334108694]
+transform = Transform3D(0.9659258, -0.05013203, -0.2539176, 0.25870863, 0.15834874, 0.95288795, -0.0075626797, -0.9861098, 0.1659227, 0, 0, 0)
+light_color = Color(1, 1, 0.8117647, 1)
+light_energy = 2.0
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=697826293]
+environment = SubResource("Environment_s70hq")
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=132773341]
+use_collision = true
+size = Vector3(50, 1, 50)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1408122103]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 25)
+size = Vector3(50, 50, 1)
+material = SubResource("StandardMaterial3D_1bvp3")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=296704830]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -25)
+size = Vector3(50, 50, 1)
+material = SubResource("StandardMaterial3D_lquwl")
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="." unique_id=1343830803]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 25, 0, 0)
+size = Vector3(1, 50, 50)
+material = SubResource("StandardMaterial3D_h2yge")
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="." unique_id=367202818]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -25, 0, 0)
+size = Vector3(1, 50, 50)
+material = SubResource("StandardMaterial3D_7mycd")
+
+[node name="Player" parent="." unique_id=346662432 instance=ExtResource("1_0xm2m")]
+
+[node name="Portal1" parent="." unique_id=982864836 node_paths=PackedStringArray("target_portal") instance=ExtResource("2_h2yge")]
+transform = Transform3D(1.3113416e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113416e-07, 21.929434, 1.8297293, 0)
+target_portal = NodePath("../Portal2")
+
+[node name="Portal2" parent="." unique_id=2087315788 node_paths=PackedStringArray("target_portal") instance=ExtResource("2_h2yge")]
+transform = Transform3D(1.3113416e-07, 0, -1, 0, 1, 0, 1, 0, 1.3113416e-07, 21.810694, 2.143577, 4.2431393)
+target_portal = NodePath("../Portal1")
