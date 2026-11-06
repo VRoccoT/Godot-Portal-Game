@@ -1,0 +1,52 @@
+[gd_scene format=3 uid="uid://dof5o4jaeea7i"]
+
+[ext_resource type="Script" uid="uid://6igrh2a52r3h" path="res://portal.gd" id="1_0r486"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_ef3v5"]
+viewport_path = NodePath("SubViewport")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gci8f"]
+resource_local_to_scene = true
+shading_mode = 0
+albedo_texture = SubResource("ViewportTexture_ef3v5")
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_ggrw3"]
+size = Vector2(2, 3.5)
+orientation = 2
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_num3o"]
+
+[sub_resource type="Sky" id="Sky_8p6ll"]
+sky_material = SubResource("ProceduralSkyMaterial_num3o")
+
+[sub_resource type="Environment" id="Environment_qkma5"]
+background_mode = 2
+sky = SubResource("Sky_8p6ll")
+ambient_light_energy = 1.5
+tonemap_mode = 3
+tonemap_exposure = 1.2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_ggrw3"]
+size = Vector3(2, 3.5, 0.5)
+
+[node name="Portal" type="Node3D" unique_id=213219110]
+script = ExtResource("1_0r486")
+
+[node name="TelaPortal" type="MeshInstance3D" parent="." unique_id=1240422904]
+material_overlay = SubResource("StandardMaterial3D_gci8f")
+mesh = SubResource("PlaneMesh_ggrw3")
+
+[node name="SubViewport" type="SubViewport" parent="." unique_id=921408416]
+size = Vector2i(1080, 1890)
+render_target_update_mode = 4
+
+[node name="CameraDoPortal" type="Camera3D" parent="SubViewport" unique_id=1811267502]
+keep_aspect = 0
+environment = SubResource("Environment_qkma5")
+
+[node name="AreaTravessia" type="Area3D" parent="." unique_id=1853932324]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AreaTravessia" unique_id=1333130647]
+shape = SubResource("BoxShape3D_ggrw3")
+
+[connection signal="body_entered" from="AreaTravessia" to="." method="_on_area_travessia_body_entered"]

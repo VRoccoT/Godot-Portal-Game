@@ -1,0 +1,23 @@
+[gd_scene format=3 uid="uid://dw010c62ceub8"]
+
+[ext_resource type="Script" uid="uid://bmwmmlm7sgb3f" path="res://jogador.gd" id="1_yuxfx"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ggrw3"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_qc3e3"]
+
+[node name="Jogador" type="CharacterBody3D" unique_id=39429403]
+script = ExtResource("1_yuxfx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=402133478]
+shape = SubResource("CapsuleShape3D_ggrw3")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=487517060]
+layers = 2
+mesh = SubResource("CapsuleMesh_qc3e3")
+
+[node name="CameraPivot" type="Node3D" parent="." unique_id=917754040]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=1324746841]
+cull_mask = 1048573
