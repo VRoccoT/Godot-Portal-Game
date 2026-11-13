@@ -3,6 +3,9 @@ extends CharacterBody3D
 const SPEED = 5.0
 const JUMP_VELOCITY = 4.5
 const MOUSE_SENSITIVITY = 0.003
+const TEMPO_INERCIA_PORTAL = 0.25
+
+var inercia_portal_restante: float = 0.0
 
 @export var portal_a: Node3D
 @export var portal_b: Node3D
@@ -67,6 +70,10 @@ func _atirar_portal(portal_alvo: Node3D) -> void:
 	else:
 		portal_alvo.look_at(portal_alvo.global_position - normal_parede, Vector3.UP)
 
+func preservar_inercia_portal() -> void:
+	# Impede que o controle WASD apague imediatamente a velocidade de saída.
+	inercia_portal_restante = TEMPO_INERCIA_PORTAL
+
 func _physics_process(delta: float) -> void:
 	# Gravidade
 	if not is_on_floor():
@@ -76,15 +83,20 @@ func _physics_process(delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 
-	# Movimentação usando exclusivamente as ações WASD configuradas no Input Map
-	var input_dir := Input.get_vector("mover_esquerda", "mover_direita", "mover_frente", "mover_tras")
-	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
-	
-	if direction:
-		velocity.x = direction.x * SPEED
-		velocity.z = direction.z * SPEED
+	# Durante 0,25 s após a travessia, mantém a componente horizontal
+	# transformada pelo portal, mas continua aplicando gravidade e colisões.
+	if inercia_portal_restante > 0.0:
+		inercia_portal_restante = maxf(0.0, inercia_portal_restante - delta)
 	else:
-		velocity.x = move_toward(velocity.x, 0, SPEED)
-		velocity.z = move_toward(velocity.z, 0, SPEED)
+		# Movimentação usando as ações WASD configuradas no Input Map
+		var input_dir := Input.get_vector("mover_esquerda", "mover_direita", "mover_frente", "mover_tras")
+		var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+		
+		if direction:
+			velocity.x = direction.x * SPEED
+			velocity.z = direction.z * SPEED
+		else:
+			velocity.x = move_toward(velocity.x, 0, SPEED)
+			velocity.z = move_toward(velocity.z, 0, SPEED)
 
 	move_and_slide()

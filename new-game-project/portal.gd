@@ -54,16 +54,40 @@ func _atualizar_perspectiva_portal() -> void:
 	
 	minha_camera.near = max(0.05, distancia_perpendicular - 0.05)
 
-func _on_area_travessia_body_entered(body: Node3D) -> void:
-	# Trava de segurança: só teletransporta se ambos os portais estiverem ativos/abertos
-	if not visible or not outro_portal or not outro_portal.visible:
+
+func _on_area_travessia_body_entered(_body: Node3D) -> void:
+	# A entrada na área não deve causar teletransporte imediato.
+	pass
+
+func _physics_process(_delta: float) -> void:
+	if not visible or not is_instance_valid(outro_portal):
 		return
 
-	if recem_teletransportado:
+	if not outro_portal.visible or recem_teletransportado:
 		return
 
-	if body is CharacterBody3D:
-		_teletransportar_jogador(body)
+	var normal_portal: Vector3 = global_transform.basis.z.normalized()
+
+	for corpo in $AreaTravessia.get_overlapping_bodies():
+		if corpo is CharacterBody3D:
+			var pos_local: Vector3 = to_local(corpo.global_position)
+
+			# Deve estar na frente e próximo ao plano do portal.
+			if pos_local.z <= 0.0 or pos_local.z > 0.70:
+				continue
+
+			# Deve estar suficientemente centralizado na abertura.
+			if absf(pos_local.x) > 0.55:
+				continue
+			if absf(pos_local.y) > 0.85:
+				continue
+
+			# Deve estar se movendo em direção ao portal.
+			if corpo.velocity.dot(normal_portal) >= -0.2:
+				continue
+
+			_teletransportar_jogador(corpo)
+			break
 
 func _teletransportar_jogador(jogador: CharacterBody3D) -> void:
 	outro_portal.recem_teletransportado = true
@@ -79,6 +103,9 @@ func _teletransportar_jogador(jogador: CharacterBody3D) -> void:
 	var velocidade_local: Vector3 = global_transform.basis.inverse() * jogador.velocity
 	velocidade_local = velocidade_local.rotated(Vector3.UP, PI)
 	jogador.velocity = outro_portal.global_transform.basis * velocidade_local
+	# Notifica o controlador do jogador para preservar o impulso de saída.
+	if jogador.has_method("preservar_inercia_portal"):
+		jogador.call("preservar_inercia_portal")
 
 	await get_tree().create_timer(0.15).timeout
 	outro_portal.recem_teletransportado = false
