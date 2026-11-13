@@ -21,3 +21,20 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.6, 0)
 
 [node name="Camera3D" type="Camera3D" parent="CameraPivot" unique_id=1324746841]
 cull_mask = 1048573
+
+[node name="PortalRayCast" type="RayCast3D" parent="CameraPivot/Camera3D" unique_id=1678605973]
+target_position = Vector3(0, 0, -50)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=831032083]
+
+[node name="CenterContainer" type="CenterContainer" parent="HUD" unique_id=184167210]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Mira" type="ColorRect" parent="HUD/CenterContainer" unique_id=1953717655]
+custom_minimum_size = Vector2(4, 4)
+layout_mode = 2
+mouse_filter = 2

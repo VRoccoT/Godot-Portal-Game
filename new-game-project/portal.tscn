@@ -1,14 +1,18 @@
 [gd_scene format=3 uid="uid://dof5o4jaeea7i"]
 
 [ext_resource type="Script" uid="uid://6igrh2a52r3h" path="res://portal.gd" id="1_0r486"]
+[ext_resource type="Shader" uid="uid://vbsf7nhgxsqy" path="res://portal.gdshader" id="2_ef3v5"]
 
-[sub_resource type="ViewportTexture" id="ViewportTexture_ef3v5"]
+[sub_resource type="ViewportTexture" id="ViewportTexture_6r214"]
 viewport_path = NodePath("SubViewport")
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_gci8f"]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_0r486"]
 resource_local_to_scene = true
-shading_mode = 0
-albedo_texture = SubResource("ViewportTexture_ef3v5")
+render_priority = 0
+shader = ExtResource("2_ef3v5")
+shader_parameter/portal_texture = SubResource("ViewportTexture_6r214")
+shader_parameter/portal_ativo = false
+shader_parameter/cor_fechado = Color(0.35, 0.35, 0.35, 1)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_ggrw3"]
 size = Vector2(2, 3.5)
@@ -33,7 +37,7 @@ size = Vector3(2, 3.5, 0.5)
 script = ExtResource("1_0r486")
 
 [node name="TelaPortal" type="MeshInstance3D" parent="." unique_id=1240422904]
-material_overlay = SubResource("StandardMaterial3D_gci8f")
+material_overlay = SubResource("ShaderMaterial_0r486")
 mesh = SubResource("PlaneMesh_ggrw3")
 
 [node name="SubViewport" type="SubViewport" parent="." unique_id=921408416]

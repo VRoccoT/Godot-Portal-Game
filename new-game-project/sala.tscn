@@ -65,6 +65,16 @@ size = Vector3(1, 20, 20)
 [sub_resource type="BoxShape3D" id="BoxShape3D_reae2"]
 size = Vector3(1, 20, 20)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_uxomr"]
+albedo_color = Color(0.92941177, 0.20784314, 0.27450982, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_reae2"]
+material = SubResource("StandardMaterial3D_uxomr")
+size = Vector3(20, 1, 20)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_60p3f"]
+size = Vector3(20, 1, 20)
+
 [node name="Sala" type="Node3D" unique_id=1733851958]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=355842291]
@@ -75,17 +85,21 @@ shadow_enabled = true
 
 [node name="PortalA" parent="." unique_id=213219110 node_paths=PackedStringArray("outro_portal") instance=ExtResource("1_qkma5")]
 transform = Transform3D(-4.371139e-08, 0, 1, 0, 1, 0, -1, 0, -4.371139e-08, 5.9761715, 2.2972312, 0)
+visible = false
 outro_portal = NodePath("../PortalB")
 
 [node name="PortalB" parent="." unique_id=1620120534 node_paths=PackedStringArray("outro_portal") instance=ExtResource("1_qkma5")]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -7.243349, 2.3016658, 0)
+visible = false
 outro_portal = NodePath("../PortalA")
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=2082595723]
 environment = SubResource("Environment_ggrw3")
 
-[node name="Jogador" parent="." unique_id=39429403 instance=ExtResource("2_8p6ll")]
+[node name="Jogador" parent="." unique_id=39429403 node_paths=PackedStringArray("portal_a", "portal_b") instance=ExtResource("2_8p6ll")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.6599883, 3.9294477)
+portal_a = NodePath("../PortalA")
+portal_b = NodePath("../PortalB")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="." unique_id=546012069]
 
@@ -134,3 +148,15 @@ mesh = SubResource("BoxMesh_f8k2k")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D5" unique_id=314654199]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10, 10, 0)
 shape = SubResource("BoxShape3D_reae2")
+
+[node name="StaticBody3D6" type="StaticBody3D" parent="." unique_id=1334891283]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 20, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="StaticBody3D6" unique_id=964724206]
+mesh = SubResource("BoxMesh_reae2")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D6" unique_id=117090226]
+shape = SubResource("BoxShape3D_60p3f")
+
+[node name="DirectionalLight3D2" type="DirectionalLight3D" parent="." unique_id=1553617028]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 20.385105, 0)
